@@ -1,0 +1,87 @@
+@font-face {
+  font-family: "iconfont"; /* Project id 3877242 */
+  src: url('iconfont.woff2?t=1675320576519') format('woff2'),
+       url('iconfont.woff?t=1675320576519') format('woff'),
+       url('iconfont.ttf?t=1675320576519') format('truetype');
+}
+
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-trendcharts:before {
+  content: "\e661";
+}
+
+.icon-management:before {
+  content: "\e71e";
+}
+
+.icon-avatar:before {
+  content: "\e600";
+}
+
+.icon-setting:before {
+  content: "\e78e";
+}
+
+.icon-money:before {
+  content: "\e939";
+}
+
+.icon-bicycle:before {
+  content: "\e679";
+}
+
+.icon-shop:before {
+  content: "\e676";
+}
+
+.icon-discount:before {
+  content: "\e6c5";
+}
+
+.icon-box:before {
+  content: "\e6cb";
+}
+
+.icon-ship:before {
+  content: "\e74f";
+}
+
+.icon-monitor:before {
+  content: "\e6ad";
+}
+
+.icon-user:before {
+  content: "\e7ae";
+}
+
+.icon-house:before {
+  content: "\e615";
+}
+
+.icon-document:before {
+  content: "\e6f3";
+}
+
+.icon-Bicycle:before {
+  content: "\e6ca";
+}
+
+.icon-menu:before {
+  content: "\e6ec";
+}
+
+.icon-coin:before {
+  content: "\e671";
+}
+
+.icon-shoppingcart:before {
+  content: "\e696";
+}
+

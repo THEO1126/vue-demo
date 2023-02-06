@@ -1,0 +1,135 @@
+{
+  "id": "3877242",
+  "name": "oaproject",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "4320366",
+      "name": "报表分析",
+      "font_class": "trendcharts",
+      "unicode": "e661",
+      "unicode_decimal": 58977
+    },
+    {
+      "icon_id": "6238175",
+      "name": "management",
+      "font_class": "management",
+      "unicode": "e71e",
+      "unicode_decimal": 59166
+    },
+    {
+      "icon_id": "10746956",
+      "name": "avatar",
+      "font_class": "avatar",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    },
+    {
+      "icon_id": "4765891",
+      "name": "setting",
+      "font_class": "setting",
+      "unicode": "e78e",
+      "unicode_decimal": 59278
+    },
+    {
+      "icon_id": "5478629",
+      "name": "money",
+      "font_class": "money",
+      "unicode": "e939",
+      "unicode_decimal": 59705
+    },
+    {
+      "icon_id": "9631817",
+      "name": "bicycle",
+      "font_class": "bicycle",
+      "unicode": "e679",
+      "unicode_decimal": 59001
+    },
+    {
+      "icon_id": "30438",
+      "name": "shop",
+      "font_class": "shop",
+      "unicode": "e676",
+      "unicode_decimal": 58998
+    },
+    {
+      "icon_id": "204017",
+      "name": "discount",
+      "font_class": "discount",
+      "unicode": "e6c5",
+      "unicode_decimal": 59077
+    },
+    {
+      "icon_id": "211390",
+      "name": "box",
+      "font_class": "box",
+      "unicode": "e6cb",
+      "unicode_decimal": 59083
+    },
+    {
+      "icon_id": "933540",
+      "name": "ship",
+      "font_class": "ship",
+      "unicode": "e74f",
+      "unicode_decimal": 59215
+    },
+    {
+      "icon_id": "2142849",
+      "name": "monitor",
+      "font_class": "monitor",
+      "unicode": "e6ad",
+      "unicode_decimal": 59053
+    },
+    {
+      "icon_id": "4766293",
+      "name": "user",
+      "font_class": "user",
+      "unicode": "e7ae",
+      "unicode_decimal": 59310
+    },
+    {
+      "icon_id": "6403476",
+      "name": "house",
+      "font_class": "house",
+      "unicode": "e615",
+      "unicode_decimal": 58901
+    },
+    {
+      "icon_id": "7008920",
+      "name": "document",
+      "font_class": "document",
+      "unicode": "e6f3",
+      "unicode_decimal": 59123
+    },
+    {
+      "icon_id": "10563134",
+      "name": "Bicycle",
+      "font_class": "Bicycle",
+      "unicode": "e6ca",
+      "unicode_decimal": 59082
+    },
+    {
+      "icon_id": "12865680",
+      "name": "menu",
+      "font_class": "menu",
+      "unicode": "e6ec",
+      "unicode_decimal": 59116
+    },
+    {
+      "icon_id": "16550083",
+      "name": "coin",
+      "font_class": "coin",
+      "unicode": "e671",
+      "unicode_decimal": 58993
+    },
+    {
+      "icon_id": "22894989",
+      "name": "shoppingcart",
+      "font_class": "shoppingcart",
+      "unicode": "e696",
+      "unicode_decimal": 59030
+    }
+  ]
+}
