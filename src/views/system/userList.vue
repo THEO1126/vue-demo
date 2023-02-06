@@ -21,11 +21,16 @@
             <vxe-column field="homeAddress" title="家庭住址" width="150"></vxe-column>
             <vxe-column field="onboardingTime" title="入职时间" width="130" sortable></vxe-column>
             <vxe-column field="departureTime" title="离职时间" width="130" sortable></vxe-column>
-            <vxe-column field="status" title="状态" width="100"></vxe-column>
+            <vxe-column field="status" title="状态" width="100">
+              <template v-slot="{ row }">
+                <el-tag v-if="row.status=='在职'" type="success">{{ row.status }}</el-tag>
+                <el-tag v-else type="info">{{ row.status }}</el-tag>
+              </template>
+            </vxe-column>
             <vxe-column title="操作" width="180" show-overflow>
-            <template #default="{ row,rowIndex }">
+            <template #default="{ row}">
               <vxe-button status="primary" icon="vxe-icon-edit" @click="editEvent(row)"></vxe-button>
-              <vxe-button status="danger" icon="vxe-icon-delete" @click="removeEvent(row,rowIndex)"></vxe-button>
+              <vxe-button status="danger" icon="vxe-icon-delete" @click="removeEvent(row)"></vxe-button>
             </template>
           </vxe-column>
             <template #empty>
@@ -135,6 +140,7 @@
 import {dataFormat} from '../../utils/dateUtil'  // 日期格式化
 import { VXETable,VxeTableInstance } from 'vxe-table'
 import console from 'console'
+
 export default { 
   name:"userList",
   data() {
@@ -201,7 +207,6 @@ export default {
         password:'',
       },
       roleList: [],
-      xTable:ref<VxeTableInstance>({})
     }
   },
 

@@ -1,6 +1,6 @@
 import { login } from '@/api/login'//引入登录 api 接口
 import {getPermissionByUserId} from '@/api/permission' // 引入获取菜单权限 api 接口
-import { getUserList,getUserListByPage,deleteUser,getRoleNameList,insertUser,updateUser} from '@/api/system' // 引入 系统管理接口
+import { getUserList,getUserListByPage,deleteUser,getRoleNameList,insertUser,updateUser} from '@/api/userApi' // 引入 员工管理接口
 
 import { getToken } from '@/utils/auth'
 
