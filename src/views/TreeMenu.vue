@@ -25,6 +25,7 @@
       <span slot="title"> {{ menu.name }}</span>
     </el-menu-item>
   </router-link>
+  
   <!-- 一级菜单有子菜单 -->
   <el-submenu v-else class="submenu" :index="(menu.perId).toString()">
     <template slot="title" >

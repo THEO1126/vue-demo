@@ -21,11 +21,16 @@
             <vxe-column field="homeAddress" title="家庭住址" width="150"></vxe-column>
             <vxe-column field="onboardingTime" title="入职时间" width="130" sortable></vxe-column>
             <vxe-column field="departureTime" title="离职时间" width="130" sortable></vxe-column>
-            <vxe-column field="status" title="状态" width="100"></vxe-column>
+            <vxe-column field="status" title="状态" width="100">
+              <template v-slot="{ row }">
+                <el-tag v-if="row.status=='在职'" type="success">{{ row.status }}</el-tag>
+                <el-tag v-else type="info">{{ row.status }}</el-tag>
+              </template>
+            </vxe-column>
             <vxe-column title="操作" width="180" show-overflow>
-            <template #default="{ row,rowIndex }">
+            <template #default="{ row}">
               <vxe-button status="primary" icon="vxe-icon-edit" @click="editEvent(row)"></vxe-button>
-              <vxe-button status="danger" icon="vxe-icon-delete" @click="removeEvent(row,rowIndex)"></vxe-button>
+              <vxe-button status="danger" icon="vxe-icon-delete" @click="removeEvent(row)"></vxe-button>
             </template>
           </vxe-column>
             <template #empty>
@@ -127,14 +132,15 @@
             </vxe-form>
           </template>
         </vxe-modal>
+
   </div>
 </div>
 </template>
 <script>
- import { defineComponent, reactive, ref } from 'vue'
 import {dataFormat} from '../../utils/dateUtil'  // 日期格式化
-import { VXETable,VxeTableInstance } from 'vxe-table'
+import { VXETable } from 'vxe-table'
 import console from 'console'
+
 export default { 
   name:"userList",
   data() {
@@ -201,7 +207,6 @@ export default {
         password:'',
       },
       roleList: [],
-      xTable:ref<VxeTableInstance>({})
     }
   },
 
@@ -381,23 +386,23 @@ export default {
     },
     //  提交
     submitEvent() {
-      this.submitLoading = true
+        this.submitLoading = true
         var roleList=[];
-        var submitFromData={};
+        var submitFormData={};
         for(var i=0;i<this.formData.roleIdList.length;i++){
             roleList[i]={}
             roleList[i]["roleId"]=this.formData.roleIdList[i]
         }
         for(var item in this.formData){
           if(this.formData[item]){
-            submitFromData[item]=this.formData[item]
+            submitFormData[item]=this.formData[item]
           }
         }
-        submitFromData["roleList"]=roleList
+        submitFormData["roleList"]=roleList
       if(!this.selectRow){
-        this.insertUser(submitFromData)
+        this.insertUser(submitFormData)
       }else{
-        this.updateUser(submitFromData)
+        this.updateUser(submitFormData)
       }
     },
     

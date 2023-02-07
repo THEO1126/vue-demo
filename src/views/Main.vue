@@ -34,7 +34,6 @@ export default {
   position: absolute;
   border-right: 1px solid #e3e3e3;
   padding-left: 250px;
-  overflow: hidden;
 }
 /* head */
 .right .head{
@@ -48,8 +47,7 @@ export default {
 .right .view{
   height: 100%;
   width: 100%;
-  overflow-y: scroll;
-  /* background-color: #009688; */
+  overflow-y: auto;
 }
 
 </style>
