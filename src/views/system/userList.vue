@@ -132,13 +132,13 @@
             </vxe-form>
           </template>
         </vxe-modal>
+
   </div>
 </div>
 </template>
 <script>
- import { defineComponent, reactive, ref } from 'vue'
 import {dataFormat} from '../../utils/dateUtil'  // 日期格式化
-import { VXETable,VxeTableInstance } from 'vxe-table'
+import { VXETable } from 'vxe-table'
 import console from 'console'
 
 export default { 
@@ -386,23 +386,23 @@ export default {
     },
     //  提交
     submitEvent() {
-      this.submitLoading = true
+        this.submitLoading = true
         var roleList=[];
-        var submitFromData={};
+        var submitFormData={};
         for(var i=0;i<this.formData.roleIdList.length;i++){
             roleList[i]={}
             roleList[i]["roleId"]=this.formData.roleIdList[i]
         }
         for(var item in this.formData){
           if(this.formData[item]){
-            submitFromData[item]=this.formData[item]
+            submitFormData[item]=this.formData[item]
           }
         }
-        submitFromData["roleList"]=roleList
+        submitFormData["roleList"]=roleList
       if(!this.selectRow){
-        this.insertUser(submitFromData)
+        this.insertUser(submitFormData)
       }else{
-        this.updateUser(submitFromData)
+        this.updateUser(submitFormData)
       }
     },
     
