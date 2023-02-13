@@ -73,3 +73,50 @@ export function updateUser(userInfo){
     data:userInfo
   })
 }
+
+/**
+ * 获取员工列表总的数量
+ */
+export function getUserListTotalPage(){
+  return request({
+    url:'/getUserListTotalPage',
+    method:'get'
+  })
+}
+
+
+/**
+ * @param name:用户名 
+ * @param nickName:姓名
+ * 根据用户名和姓名 查询用户列表
+ */
+
+export function searchUserList(searchInfo){
+  let name=searchInfo.name
+  let nickName=searchInfo.nickName
+  let pageSize=searchInfo.pageSize
+  let currentPage=searchInfo.currentPage
+  return request({
+    url:'/searchUserList',
+    method:'get',
+    params:{
+      name:name,
+      nickName:nickName,
+      currentPage:currentPage,
+      pageSize:pageSize
+    }
+  })
+}
+
+export function searchUserListTotalPage(searchInfo){
+  let name=searchInfo.name
+  let nickName=searchInfo.nickName
+  return request({
+    url:'/searchUserList',
+    method:'get',
+    params:{
+      name:name,
+      nickName:nickName
+    }
+  })
+}

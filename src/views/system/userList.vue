@@ -3,7 +3,10 @@
     <div id="box">
       <vxe-toolbar>
           <template #buttons>
-            <vxe-input v-model="data.filterName" type="search" placeholder="输入账号或姓名" @keyup="searchEvent()"></vxe-input>
+            <vxe-input v-model="filter.name"  placeholder="输入账号" ></vxe-input>
+            <vxe-input v-model="filter.nickName"  placeholder="输入姓名" ></vxe-input>
+            <vxe-button  status="primary" content="查询" @click="searchEvent()"></vxe-button>
+            <vxe-button  content="重置" @click="resetEvent()"></vxe-button>
             <vxe-button status="primary" icon="vxe-icon-square-plus" @click="insertEvent()">新增</vxe-button>
           </template>
         </vxe-toolbar>
@@ -145,6 +148,7 @@ export default {
   name:"userList",
   data() {
     return {
+      searchFlag:false,
       tableLoading: false,
       submitLoading: false,
       tablePage: {
@@ -153,11 +157,16 @@ export default {
         pageSizes:[5,10,20,50,100],
         total: 0
       },
+      filter:{
+        name:'',
+        nickName:''
+      },
       data:{
-        filterName: '',
         list: [],  // 用于在界面显示的数据
         tableData:[],  // 存放真正的数据
-        listCopy:[], // 用于查询前后存放的假数据
+        tableTotal:0,
+        searchTotal:0
+        // listCopy:[], // 用于查询前后存放的假数据
       },
       showEdit: false,
       selectRow:null,
@@ -248,48 +257,62 @@ export default {
           roleIdList:row.roleIdList
         }
       },
-      // 获取员工列表
-      getUserList(){
-          this.tableLoading = true
-          setTimeout(() => {
-              this.$store.dispatch('GetUserList').then((res) => {
-                let statusCode = res.data.statusCode
-                  // 判断结果
-              if (statusCode==200) {
-                  this.data.tableData=res.data.data     
-                  // 日期格式化            
-                  this.data.tableData.forEach(item=>{
-                    var roleIdList=[]
-                    item.roleList.forEach(i=>{
-                      roleIdList.push(i.roleId)
-                    })
-                    item.roleIdList=roleIdList
-                    if(item.onboardingTime!=null){
-                      item.onboardingTime =dataFormat(item.onboardingTime)
-                    }
-                    if(item.departureTime!=null){
-                      item.departureTime =dataFormat(item.departureTime)
-                    }
-                  })         
-                  this.tablePage.total = res.data.data.length
-                  this.tableLoading = false
-              } else {
-                  this.$message({
-                      showClose: true,
-                      message: '加载失败！',
-                      type: 'error'
-                  });
-              }
-              }).catch((err) => {
-                console.log(err)
-                  this.$message({
-                      showClose: true,
-                      message: '无权访问！',
-                      type: 'error'
-                  });
-              })
-          },200)
+      getUserListTotalPage(){
+          this.$store.dispatch('GetUserListTotalPage').then((res) => {  
+          this.data.tableTotal=res.data.data
+          this.tablePage.total = this.data.tableTotal
+          this.tableLoading = false
+          }).catch((err) => {
+            console.log(err)
+              this.$message({
+                  showClose: true,
+                  message: '无权访问！',
+                  type: 'error'
+              });
+          })
       },
+      // 获取员工列表
+      // getUserList(){
+      //     this.tableLoading = true
+      //     setTimeout(() => {
+      //         this.$store.dispatch('GetUserList').then((res) => {
+      //           let statusCode = res.data.statusCode
+      //             // 判断结果
+      //         if (statusCode==200) {
+      //             this.data.tableData=res.data.data     
+      //             // 日期格式化            
+      //             this.data.tableData.forEach(item=>{
+      //               var roleIdList=[]
+      //               item.roleList.forEach(i=>{
+      //                 roleIdList.push(i.roleId)
+      //               })
+      //               item.roleIdList=roleIdList
+      //               if(item.onboardingTime!=null){
+      //                 item.onboardingTime =dataFormat(item.onboardingTime)
+      //               }
+      //               if(item.departureTime!=null){
+      //                 item.departureTime =dataFormat(item.departureTime)
+      //               }
+      //             })         
+      //             this.tablePage.total = res.data.data.length
+      //             this.tableLoading = false
+      //         } else {
+      //             this.$message({
+      //                 showClose: true,
+      //                 message: '加载失败！',
+      //                 type: 'error'
+      //             });
+      //         }
+      //         }).catch((err) => {
+      //           console.log(err)
+      //             this.$message({
+      //                 showClose: true,
+      //                 message: '无权访问！',
+      //                 type: 'error'
+      //             });
+      //         })
+      //     },200)
+      // },
 
       //  分页查询
       getUserListByPage(){
@@ -300,7 +323,6 @@ export default {
                     // 判断结果
                 if (statusCode==200) {
                     this.data.list=res.data.data
-                    this.data.listCopy=this.data.list
                     this.tableLoading = false
                     this.data.list.forEach(item=>{
                       var roleIdList=[]
@@ -315,6 +337,7 @@ export default {
                         item.departureTime =dataFormat(item.departureTime)
                       }
                     })
+                    this.data.tableData=this.data.list
                 } else {
                     console.log("错误")
                 }
@@ -328,24 +351,95 @@ export default {
               })
           },200)
       },
-      // 搜索事件
-      searchEvent() {
-        const filterName = this.$XEUtils.toValueString(this.data.filterName).trim().toLowerCase()
-        if (filterName) {
-          const filterRE = new RegExp(filterName, 'gi')
-          const searchProps = ['nickName','username']
-          const rest = this.data.tableData.filter(item => searchProps.some(key => this.$XEUtils.toValueString(item[key]).toLowerCase().indexOf(filterName) > -1))
-          this.data.list = rest.map(row => {
-            const item = Object.assign({}, row)
-            searchProps.forEach(key => {
-              item[key] = this.$XEUtils.toValueString(item[key]).replace(filterRE, match => `<span class="keyword-lighten">${match}</span>`)
-            })
-            return item
-          })
-        } else {
-          this.data.list = this.data.listCopy
+      // 搜索事件 
+      async searchEvent() {
+        const nickName = this.$XEUtils.toValueString(this.filter.nickName).trim().toLowerCase()
+        const name = this.$XEUtils.toValueString(this.filter.name).trim().toLowerCase()
+        if(nickName || name){
+          this.searchFlag=true
+          var searchInfo={}
+          searchInfo.name=name
+          searchInfo.nickName=nickName
+          searchInfo.currentPage=this.tablePage.currentPage
+          searchInfo.pageSize=this.tablePage.pageSize
+          await this.searchUserList(searchInfo)
+          await this.searchUserListTotalPage(searchInfo)         
+        }
+    },
+    resetEvent(){
+      if(this.searchFlag){
+        this.searchFlag=false
+        this.filter.name='',
+        this.filter.nickName=''
+        this.data.list=this.data.tableData
+        this.tablePage.total = this.data.tableTotal
       }
     },
+    searchUserList(searchInfo){
+      console.log(searchInfo)
+      this.$store.dispatch("SearchUserList",searchInfo).then((res)=>{
+        let statusCode = res.data.statusCode
+        if (statusCode==200) {
+            this.data.list=res.data.data
+            this.tableLoading = false
+            this.data.list.forEach(item=>{
+              var roleIdList=[]
+              item.roleList.forEach(i=>{
+                roleIdList.push(i.roleId)
+              })
+              item.roleIdList=roleIdList
+              if(item.onboardingTime!=null){
+                item.onboardingTime =dataFormat(item.onboardingTime)
+              }
+              if(item.departureTime!=null){
+                item.departureTime =dataFormat(item.departureTime)
+              }
+            })
+            
+        } else {
+            console.log("错误")
+        }
+      }).catch((err) => {
+          console.log(err);
+          this.$message({
+            showClose: true,
+            message: '无权访问！',
+            type: 'error'
+          });
+      })
+    },
+    searchUserListTotalPage(searchInfo){
+      this.$store.dispatch('SearchUserListTotalPage',searchInfo).then((res) => {  
+        this.data.searchTotal=res.data.data.length
+        console.log(res.data.data.length)
+        this.tablePage.total=this.data.searchTotal
+        this.tableLoading = false
+        }).catch((err) => {
+          console.log(err)
+            this.$message({
+                showClose: true,
+                message: '无权访问！',
+                type: 'error'
+            });
+        })
+    },
+    // searchEvent() {
+    //     const filterName = this.$XEUtils.toValueString(this.data.filterName).trim().toLowerCase()
+    //     if (filterName) {
+    //       const filterRE = new RegExp(filterName, 'gi')
+    //       const searchProps = ['nickName','username']
+    //       const rest = this.data.tableData.filter(item => searchProps.some(key => this.$XEUtils.toValueString(item[key]).toLowerCase().indexOf(filterName) > -1))
+    //       this.data.list = rest.map(row => {
+    //         const item = Object.assign({}, row)
+    //         searchProps.forEach(key => {
+    //           item[key] = this.$XEUtils.toValueString(item[key]).replace(filterRE, match => `<span class="keyword-lighten">${match}</span>`)
+    //         })
+    //         return item
+    //       })
+    //     } else {
+    //       this.data.list = this.data.listCopy
+    //   }
+    // },
     insertUser(userInfo){
       this.$store.dispatch("InsertUser",userInfo).then((res)=>{
           console.log(res.data)
@@ -354,6 +448,8 @@ export default {
             VXETable.modal.message({ content: '新增成功', status: 'success' })
             this.getUserListByPage()
             this.showEdit = false
+            this.data.tableTotal=this.data.tableTotal+1
+            this.tablePage.total=this.data.tableTotal
           }else{
             this.submitLoading = false
             this.showEdit = true
@@ -411,35 +507,21 @@ export default {
       const type = await VXETable.modal.confirm('您确定要删除该数据?')
       if (type === 'confirm'){
         let userId=row.userId
-        let index = (this.data.list).findIndex(item => {
-          if (item.userId==userId) {
-            console.log("item.userId:"+item.userId)
-            return true
-          }
-        })
-        await this.deleteUser(userId)
-        this.data.tableData.splice(index,1)
-        this.tablePage.total =  this.data.tableData.length
-        this.getUserListByPage()
+        this.deleteUser(userId)
       }
     },
     // 删除员工
     deleteUser(userId){
-        this.$store.dispatch('DeleteUser',userId).then((res=>{
-            if(res){
-              this.$message({
-                showClose: true,
-                message: '删除成功！',
-                type: 'success'
-              });
-            }else{
-              this.$message({
-                showClose: true,
-                message: '删除失败！',
-                type: 'error'
-              });
-            }
-        }))
+      this.$store.dispatch('DeleteUser',userId).then((res=>{
+          if(res){
+            VXETable.modal.message({ content: '删除成功', status: 'success' })
+            this.data.tableTotal=this.data.tableTotal-1
+            this.tablePage.total=this.data.tableTotal
+            this.getUserListByPage()
+          }else{
+            VXETable.modal.message({ content: '删除错误', status: 'error' })
+          }
+      }))
     },
 
     // 获取所有的角色名
@@ -457,7 +539,8 @@ export default {
   },
 
   async created(){
-      await this.getUserList()
+      // await this.getUserList()
+      await this.getUserListTotalPage()
       await this.getUserListByPage()
   }
 }
