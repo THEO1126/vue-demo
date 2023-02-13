@@ -7,13 +7,15 @@ import Vuex from 'vuex' //引入 Vuex
 import user from './modules/user' 
 import menu from './modules/menu' 
 import company from './modules/company' 
+import role from './modules/role'
 
 Vue.use(Vuex)
 const store = new Vuex.Store({
   modules: {
     user, //使用 user.js 中的 action
     menu,
-    company
+    company,
+    role
   }
 })
 
