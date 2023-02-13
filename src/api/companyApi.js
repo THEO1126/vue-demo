@@ -50,3 +50,49 @@ export function getCompanyListByPage(tablePage){
     }
   })
 }
+
+/**
+ * 获取公司列表总的数量
+ */
+export function getCompanyListTotalPage(){
+  return request({
+    url:'/getCompanyListTotalPage',
+    method:'get'
+  })
+}
+
+/**
+ * @param name:公司名 
+ * 根据公司名 查询公司列表
+ * 分页查询
+ */
+export function searchCompanyList(searchInfo){
+  let name=searchInfo.name
+  let pageSize=searchInfo.pageSize
+  let currentPage=searchInfo.currentPage
+  return request({
+    url:'/searchCompanyList',
+    method:'get',
+    params:{
+      name:name,
+      currentPage:currentPage,
+      pageSize:pageSize
+    }
+  })
+}
+
+
+/**
+ * @param name:公司名 
+ * 根据公司名 查询公司列表 的数量
+ */
+export function searchCompanyListTotalPage(searchInfo){
+  let name=searchInfo.name
+  return request({
+    url:'/searchCompanyListTotalPage',
+    method:'get',
+    params:{
+      name:name,
+    }
+  })
+}

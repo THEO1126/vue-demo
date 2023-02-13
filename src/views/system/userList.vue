@@ -3,10 +3,10 @@
     <div id="box">
       <vxe-toolbar>
           <template #buttons>
-            <vxe-input v-model="filter.name"  placeholder="输入账号" ></vxe-input>
-            <vxe-input v-model="filter.nickName"  placeholder="输入姓名" ></vxe-input>
+            <vxe-input v-model="filter.nickName"  placeholder="输入姓名" @keyup.enter.native="searchEvent()"></vxe-input>
+            <vxe-input v-model="filter.name"  placeholder="输入账号" @keyup.enter.native="searchEvent()"></vxe-input>
             <vxe-button  status="primary" content="查询" @click="searchEvent()"></vxe-button>
-            <vxe-button  content="重置" @click="resetEvent()"></vxe-button>
+            <vxe-button  content="返回全部数据" status="danger"  @click="resetEvent()" :disabled="!searchFlag"></vxe-button>
             <vxe-button status="primary" icon="vxe-icon-square-plus" @click="insertEvent()">新增</vxe-button>
           </template>
         </vxe-toolbar>
@@ -148,7 +148,7 @@ export default {
   name:"userList",
   data() {
     return {
-      searchFlag:false,
+      searchFlag:false, // 搜索标志
       tableLoading: false,
       submitLoading: false,
       tablePage: {
@@ -156,6 +156,12 @@ export default {
         pageSize: 5,
         pageSizes:[5,10,20,50,100],
         total: 0
+      },
+      searchInfo:{
+        name:'',
+        nickName:'',
+        currentPage:'',
+        pageSize:''
       },
       filter:{
         name:'',
@@ -357,13 +363,13 @@ export default {
         const name = this.$XEUtils.toValueString(this.filter.name).trim().toLowerCase()
         if(nickName || name){
           this.searchFlag=true
-          var searchInfo={}
-          searchInfo.name=name
-          searchInfo.nickName=nickName
-          searchInfo.currentPage=this.tablePage.currentPage
-          searchInfo.pageSize=this.tablePage.pageSize
-          await this.searchUserList(searchInfo)
-          await this.searchUserListTotalPage(searchInfo)         
+          this.searchInfo.name=name
+          this.searchInfo.nickName=nickName
+          this.searchInfo.currentPage=this.tablePage.currentPage
+          this.searchInfo.pageSize=this.tablePage.pageSize
+          console.log(this.searchInfo)
+          await this.searchUserList()
+          // await this.searchUserListTotalPage()    
         }
     },
     resetEvent(){
@@ -371,13 +377,13 @@ export default {
         this.searchFlag=false
         this.filter.name='',
         this.filter.nickName=''
-        this.data.list=this.data.tableData
-        this.tablePage.total = this.data.tableTotal
+        this.getUserListByPage()
+        this.tablePage.total=this.data.tableTotal
       }
     },
-    searchUserList(searchInfo){
-      console.log(searchInfo)
-      this.$store.dispatch("SearchUserList",searchInfo).then((res)=>{
+    searchUserList(){
+      console.log(this.searchInfo)
+      this.$store.dispatch("SearchUserList",this.searchInfo).then((res)=>{
         let statusCode = res.data.statusCode
         if (statusCode==200) {
             this.data.list=res.data.data
@@ -395,7 +401,7 @@ export default {
                 item.departureTime =dataFormat(item.departureTime)
               }
             })
-            
+            this.searchUserListTotalPage()
         } else {
             console.log("错误")
         }
@@ -408,10 +414,10 @@ export default {
           });
       })
     },
-    searchUserListTotalPage(searchInfo){
-      this.$store.dispatch('SearchUserListTotalPage',searchInfo).then((res) => {  
-        this.data.searchTotal=res.data.data.length
-        console.log(res.data.data.length)
+    searchUserListTotalPage(){
+      this.$store.dispatch('SearchUserListTotalPage',this.searchInfo).then((res) => {  
+        this.data.searchTotal=res.data.data
+        console.log(res.data.data)
         this.tablePage.total=this.data.searchTotal
         this.tableLoading = false
         }).catch((err) => {
@@ -534,7 +540,13 @@ export default {
     handlePageChange ({ currentPage, pageSize }) {
       this.tablePage.currentPage = currentPage
       this.tablePage.pageSize = pageSize
-      this.getUserListByPage()
+      if(this.searchFlag){
+        // this.searchUserList()
+        this.searchEvent()
+      }else{
+        this.getUserListByPage()
+      }
+      
     },
   },
 

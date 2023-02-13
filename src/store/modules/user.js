@@ -142,7 +142,7 @@ const user = {
     
     SearchUserListTotalPage({commit},searchInfo){
       return new Promise((resolve, reject) => { //封装一个 Promise
-        searchUserList(searchInfo).then(response => { //使用 permission 接口进行网络请求
+        searchUserListTotalPage(searchInfo).then(response => { //使用 permission 接口进行网络请求
           resolve(response) //将结果封装进 Promise
         }).catch(error => {
           console.log("system.js searchUserListTotalPage 错误")

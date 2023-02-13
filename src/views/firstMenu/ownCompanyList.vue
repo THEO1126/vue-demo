@@ -3,7 +3,9 @@
     <div id="box">
       <vxe-toolbar>
           <template #buttons>
-            <vxe-input v-model="data.filterName" type="search" placeholder="输入要查询的客户信息" @keyup="searchEvent()"></vxe-input>
+            <vxe-input v-model="filter.name"  placeholder="输入要查询的客户信息" @keyup.enter.native="searchEvent()"></vxe-input>
+            <vxe-button  status="primary" content="查询" @click="searchEvent()"></vxe-button>
+            <vxe-button  content="返回全部数据" status="danger"  @click="resetEvent()" :disabled="!searchFlag"></vxe-button>
             <vxe-button status="primary" icon="vxe-icon-square-plus" @click="insertEvent()">新增</vxe-button>
           </template>
         </vxe-toolbar>
@@ -84,6 +86,7 @@ export default {
   name:"ownCompanyList",
   data() {
     return {
+      searchFlag:false, // 搜索标志
       username: JSON.parse(window.localStorage.getItem("user")).data.username,
       tableLoading: false,
       submitLoading: false,
@@ -93,11 +96,20 @@ export default {
         pageSizes:[5,10,20,50,100],
         total: 0
       },
+      filter:{
+        name:''
+      },
+      searchInfo:{
+        name:'',
+        currentPage:'',
+        pageSize:''
+      },
       data:{
-        filterName: '',
         list: [],  // 用于在界面显示的数据
         tableData:[],  // 存放真正的数据
-        listCopy:[], // 用于查询前后存放的假数据
+        tableTotal:0,
+        searchTotal:0
+        // listCopy:[], // 用于查询前后存放的假数据
       },
       showEdit: false,
       selectRow:null,
@@ -147,58 +159,111 @@ export default {
         }
       },
 
-      getAllCompany(){
-          this.tableLoading = true
-          setTimeout(() => {
-              this.$store.dispatch('GetAllCompany').then((res) => {
-                let statusCode = res.data.statusCode
-                console.log(res)
-                  // 判断结果
-              if (statusCode==200) {
-                  this.data.tableData=res.data.data
-                  this.data.list= res.data.data
-                  this.data.listCopy=this.data.list
-                  this.tableLoading = false
-                  this.tablePage.total=res.data.data.length
-                  this.data.tableData.forEach(item=>{
-                    if(item.createTime!=null){
-                      item.createTime =timeFormat(item.createTime)
-                    }
-                  }) 
-              } else {
-                  this.$message({
-                      showClose: true,
-                      message: '加载失败！',
-                      type: 'error'
-                  });
-              }
-              }).catch((err) => {
-                console.log(err)
-                  this.$message({
-                      showClose: true,
-                      message: '无权访问！',
-                      type: 'error'
-                  });
-              })
-          },200)
-      },
+      // getAllCompany(){
+      //     this.tableLoading = true
+      //     setTimeout(() => {
+      //         this.$store.dispatch('GetAllCompany').then((res) => {
+      //           let statusCode = res.data.statusCode
+      //           console.log(res)
+      //             // 判断结果
+      //         if (statusCode==200) {
+      //             this.data.tableData=res.data.data
+      //             this.data.list= res.data.data
+      //             this.data.listCopy=this.data.list
+      //             this.tableLoading = false
+      //             this.tablePage.total=res.data.data.length
+      //             this.data.tableData.forEach(item=>{
+      //               if(item.createTime!=null){
+      //                 item.createTime =timeFormat(item.createTime)
+      //               }
+      //             }) 
+      //         } else {
+      //             this.$message({
+      //                 showClose: true,
+      //                 message: '加载失败！',
+      //                 type: 'error'
+      //             });
+      //         }
+      //         }).catch((err) => {
+      //           console.log(err)
+      //             this.$message({
+      //                 showClose: true,
+      //                 message: '无权访问！',
+      //                 type: 'error'
+      //             });
+      //         })
+      //     },200)
+      // },
 
-      // 搜索事件
-      searchEvent() {
-        const filterName = this.$XEUtils.toValueString(this.data.filterName).trim().toLowerCase()
-        if (filterName) {
-          const filterRE = new RegExp(filterName, 'gi')
-          const searchProps = ['ownCompanyName']
-          const rest = this.data.tableData.filter(item => searchProps.some(key => this.$XEUtils.toValueString(item[key]).toLowerCase().indexOf(filterName) > -1))
-          this.data.list = rest.map(row => {
-            const item = Object.assign({}, row)
-            searchProps.forEach(key => {
-              item[key] = this.$XEUtils.toValueString(item[key]).replace(filterRE, match => `<span class="keyword-lighten">${match}</span>`)
-            })
-            return item
-          })
+    resetEvent(){
+      if(this.searchFlag){
+        this.searchFlag=false
+        this.filter.name='',
+        this.getCompanyListByPage()
+        this.tablePage.total=this.data.tableTotal
+      }
+    },
+    searchCompanyListTotalPage(){
+      this.$store.dispatch('SearchCompanyListTotalPage',this.searchInfo).then((res) => {  
+        this.data.searchTotal=res.data.data
+        this.tablePage.total=this.data.searchTotal
+        this.tableLoading = false
+        }).catch((err) => {
+          console.log(err)
+            this.$message({
+                showClose: true,
+                message: '无权访问！',
+                type: 'error'
+            });
+        })
+    },
+    searchCompanyList(){
+      this.$store.dispatch("SearchCompanyList",this.searchInfo).then((res)=>{
+        let statusCode = res.data.statusCode
+        if (statusCode==200) {
+            this.data.list=res.data.data
+            this.data.list.forEach(item=>{
+              if(item.createTime!=null){
+                item.createTime =timeFormat(item.createTime)
+            }})
+            this.tableLoading = false   
+            this.searchCompanyListTotalPage()         
         } else {
-          this.data.list = this.data.listCopy
+            console.log("错误")
+        }
+      }).catch((err) => {
+          console.log(err);
+          this.$message({
+            showClose: true,
+            message: '无权访问！',
+            type: 'error'
+          });
+      })
+    },
+
+    getCompanyListTotalPage(){
+      this.$store.dispatch('GetCompanyListTotalPage').then((res) => {  
+        this.data.tableTotal=res.data.data
+        this.tablePage.total=this.data.tableTotal
+        this.tableLoading = false
+        }).catch((err) => {
+          console.log(err)
+            this.$message({
+                showClose: true,
+                message: '无权访问！',
+                type: 'error'
+            });
+        })
+    },
+      // 搜索事件
+    async searchEvent() {
+      const name = this.$XEUtils.toValueString(this.filter.name).trim().toLowerCase()
+      if(name){
+        this.searchFlag=true
+        this.searchInfo.name=name
+        this.searchInfo.currentPage=this.tablePage.currentPage
+        this.searchInfo.pageSize=this.tablePage.pageSize
+        await this.searchCompanyList()
       }
     },
     insertCompany(menu){
@@ -207,9 +272,10 @@ export default {
           if(statusCode==200){
             this.submitLoading = false
             VXETable.modal.message({ content: '新增成功', status: 'success' })
-            this.getAllCompany()
             this.getCompanyListByPage()
             this.showEdit = false
+            this.data.tableTotal=this.data.tableTotal+1
+            this.tablePage.total=this.data.tableTotal
           }else{
             this.submitLoading = false
             this.showEdit = true
@@ -276,6 +342,8 @@ export default {
         let statusCode = res.data.statusCode
           if(statusCode==200){
             VXETable.modal.message({ content: '删除成功', status: 'success' })
+            this.data.tableTotal=this.data.tableTotal-1
+            this.tablePage.total=this.data.tableTotal
           }else{
             VXETable.modal.message({ content: '删除失败', status: 'error' })
           }
@@ -296,8 +364,8 @@ export default {
                       item.createTime =timeFormat(item.createTime)
                     }
                   }) 
-                    this.data.listCopy=this.data.list
-                    this.tableLoading = false
+                  this.data.tableData=this.data.list
+                  this.tableLoading = false
                 } else {
                     console.log("错误")
                 }
@@ -315,13 +383,19 @@ export default {
     handlePageChange ({ currentPage, pageSize }) {
       this.tablePage.currentPage = currentPage
       this.tablePage.pageSize = pageSize
-      this.getCompanyListByPage()
+      if(this.searchFlag){
+        this.searchEvent()
+      }else{
+        this.getCompanyListByPage()
+      }
     },
   },
 
   async created(){
-      await this.getAllCompany()
+      // await this.getAllCompany()
+
       await this.getCompanyListByPage()
+      await this.getCompanyListTotalPage()
   }
 }
 </script>

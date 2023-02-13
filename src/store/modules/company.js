@@ -1,5 +1,5 @@
 import { getAllCompany,updateCompany,deleteCommpanyById,insertCompany,getCompanyListByPage} from '@/api/companyApi' 
-
+import {searchCompanyList,searchCompanyListTotalPage,getCompanyListTotalPage} from '@/api/companyApi' 
 const company = {
 
   actions: {
@@ -56,7 +56,41 @@ const company = {
             reject(error)
           })
         })
-      },
+    },
+
+    GetCompanyListTotalPage({commit}){
+      return new Promise((resolve, reject) => { //封装一个 Promise
+        getCompanyListTotalPage().then(response => { //使用 permission 接口进行网络请求
+          resolve(response) //将结果封装进 Promise
+        }).catch(error => {
+          console.log("company.js GetCompanyListTotalPage 错误")
+          reject(error)
+        })
+      })
+    },
+
+    SearchCompanyList({commit},searchInfo){
+      return new Promise((resolve, reject) => { //封装一个 Promise
+        searchCompanyList(searchInfo).then(response => { //使用 permission 接口进行网络请求
+          resolve(response) //将结果封装进 Promise
+        }).catch(error => {
+          console.log("company.js SearchCompanyList 错误")
+          reject(error)
+        })
+      })
+    },
+
+    SearchCompanyListTotalPage({commit},searchInfo){
+      return new Promise((resolve, reject) => { //封装一个 Promise
+        searchCompanyListTotalPage(searchInfo).then(response => { //使用 permission 接口进行网络请求
+          resolve(response) //将结果封装进 Promise
+        }).catch(error => {
+          console.log("company.js SearchCompanyListTotalPage 错误")
+          reject(error)
+        })
+      })
+    },
+
   }
 }
 

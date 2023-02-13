@@ -88,7 +88,8 @@ export function getUserListTotalPage(){
 /**
  * @param name:用户名 
  * @param nickName:姓名
- * 根据用户名和姓名 查询用户列表
+ * 根据用户名和姓名 查询用户列表 
+ * 分页查询
  */
 
 export function searchUserList(searchInfo){
@@ -108,11 +109,16 @@ export function searchUserList(searchInfo){
   })
 }
 
+/**
+ * @param name:用户名 
+ * @param nickName:姓名
+ * 根据用户名和姓名 查询用户列表的总数量
+ */
 export function searchUserListTotalPage(searchInfo){
   let name=searchInfo.name
   let nickName=searchInfo.nickName
   return request({
-    url:'/searchUserList',
+    url:'/searchUserListTotalPage',
     method:'get',
     params:{
       name:name,
