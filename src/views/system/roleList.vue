@@ -21,7 +21,7 @@
             <vxe-column title="操作" width="400" show-overflow>
             <template #default="{ row}">
               <vxe-button status="primary" icon="vxe-icon-edit" @click="editEvent(row)">编辑</vxe-button>
-              <vxe-button status="primary" icon="vxe-icon-edit" @click="showMenuBtn(row)">修改权限</vxe-button>
+              <vxe-button status="success" icon="vxe-icon-edit" @click="showMenuBtn(row)">修改权限</vxe-button>
               <vxe-button status="danger" icon="vxe-icon-delete" @click="removeEvent(row)">删除</vxe-button>
             </template>
           </vxe-column>
@@ -115,6 +115,10 @@ export default {
       username: JSON.parse(window.localStorage.getItem("user")).data.username,
       tableLoading: false,
       submitLoading: false,
+      selectRoleMenu:{
+        roleId:'',
+        menuList:'',
+      },
       tablePage: {
         currentPage: 1,
         pageSize: 10,
@@ -156,12 +160,26 @@ export default {
 
     // 选择 的 分配权限
     selectChangeEvent({ $table }){
+      this.selectMenuId=[]
       const records = $table.getCheckboxRecords()
-      console.info(`勾选${records.length}个树形节点`, records)
+      records.forEach(item=>{
+        this.selectMenuId.push(item.id)
+      })
+      var MenuIdList=[]
+      for(var i=0;i<this.selectMenuId.length;i++){
+        MenuIdList[i]={}
+        MenuIdList[i]['id']=this.selectMenuId[i]
+      }
+      this.selectRoleMenu.menuList=[]
+      this.selectRoleMenu.menuList=MenuIdList;
     },
       //  取消按钮
     cancel(){
-      this.showEdit=false
+      if(this.showMenu){
+        this.showMenu=false
+      }else{
+        this.showEdit=false
+      }
     },
       insertEvent(){
         this.showEdit=true,
@@ -182,15 +200,23 @@ export default {
         }
       },
     async showMenuBtn(row){
-      row.menu.forEach(item=>{
+      this.checkRowKeys=[]
+      this.selectRoleMenu={}
+      await row.menuList.forEach(item=>{
         this.checkRowKeys.push(item.id)
       })
       this.showMenu=true
+      this.selectRoleMenu['roleId']=row.roleId
+      var MenuIdList=[]
+      for(var i=0;i<this.checkRowKeys.length;i++){
+        MenuIdList[i]={}
+        MenuIdList[i]['id']=this.checkRowKeys[i]
+      }
+      this.selectRoleMenu.menuList=MenuIdList;
     },
     getAllMenu(){
       this.tableLoading = true
       this.$store.dispatch("GetAllMenu").then((res)=>{
-        console.log(res)
           let statusCode = res.data.statusCode
           if(statusCode==200){
             this.menuList=res.data.data
@@ -208,14 +234,12 @@ export default {
       this.$store.dispatch('GetRoleList').then((res) => {  
         let statusCode = res.data.statusCode
         if(statusCode==200){
-            console.log(res)
             this.data.tableTotal=res.data.data.length
             this.tablePage.total=this.data.tableTotal
             this.data.tableData=res.data.data
             this.data.list=this.data.tableData
             this.tableLoading = false
         }
-
         }).catch((err) => {
           console.log(err)
             this.$message({
@@ -230,71 +254,36 @@ export default {
       if(this.searchFlag){
         this.searchFlag=false
         this.filter.name='',
-        this.getCompanyListByPage()
+        this.getRoleList()
         this.tablePage.total=this.data.tableTotal
       }
     },
-    searchCompanyListTotalPage(){
-      this.$store.dispatch('SearchCompanyListTotalPage',this.searchInfo).then((res) => {  
-        this.data.searchTotal=res.data.data
-        this.tablePage.total=this.data.searchTotal
-        this.tableLoading = false
-        }).catch((err) => {
-          console.log(err)
-            this.$message({
-                showClose: true,
-                message: '无权访问！',
-                type: 'error'
-            });
-        })
-    },
-    searchCompanyList(){
-      this.$store.dispatch("SearchCompanyList",this.searchInfo).then((res)=>{
+
+    searchRoleByName(roleName){
+      this.$store.dispatch("SearchRoleByName",roleName).then((res)=>{
         let statusCode = res.data.statusCode
         if (statusCode==200) {
             this.data.list=res.data.data
-            this.data.list.forEach(item=>{
-              if(item.createTime!=null){
-                item.createTime =timeFormat(item.createTime)
-            }})
-            this.tableLoading = false   
-            this.searchCompanyListTotalPage()         
+            this.data.searchTotal=res.data.data.length
+            this.tablePage.total=this.data.searchTotal
+            this.tableLoading = false               
         } else {
             console.log("错误")
         }
       }).catch((err) => {
-          console.log(err);
-          this.$message({
-            showClose: true,
-            message: '无权访问！',
-            type: 'error'
-          });
+          VXETable.modal.message({ content: '无权访问', status: 'error' })
       })
     },
 
-    getCompanyListTotalPage(){
-      this.$store.dispatch('GetCompanyListTotalPage').then((res) => {  
-        this.data.tableTotal=res.data.data
-        this.tablePage.total=this.data.tableTotal
-        this.tableLoading = false
-        }).catch((err) => {
-          console.log(err)
-            this.$message({
-                showClose: true,
-                message: '无权访问！',
-                type: 'error'
-            });
-        })
-    },
       // 搜索事件
     async searchEvent() {
-      const name = this.$XEUtils.toValueString(this.filter.name).trim().toLowerCase()
-      if(name){
+      const roleName = this.$XEUtils.toValueString(this.filter.name).trim().toLowerCase()
+      if(roleName){
         this.searchFlag=true
-        this.searchInfo.name=name
-        this.searchInfo.currentPage=this.tablePage.currentPage
-        this.searchInfo.pageSize=this.tablePage.pageSize
-        await this.searchCompanyList()
+        this.searchInfo.name=roleName
+        // this.searchInfo.currentPage=this.tablePage.currentPage
+        // this.searchInfo.pageSize=this.tablePage.pageSize
+        await this.searchRoleByName(roleName)
       }
     },
 
@@ -347,83 +336,75 @@ export default {
           if(this.formData[item])
             submitFormData[item]=this.formData[item]
       }
-      if(this.selectRow){
-         submitFormData["updateBy"]=this.username
-         this.updateRole(submitFormData)
-      }
-      if(!this.selectRow){
-        submitFormData["createBy"]=this.username
-        this.insertRole(submitFormData)
+      if(!this.showMenu){
+        if(this.selectRow){
+          submitFormData["updateBy"]=this.username
+          this.updateRole(submitFormData)
+        }
+        else{
+          submitFormData["createBy"]=this.username
+          this.insertRole(submitFormData)
+        }
+      }else{
+        this.insertRoleMenu(this.selectRoleMenu)
       }
     },
     
     // 删除  async 和 await来实现同步和异步
     async removeEvent(row) {
-      console.log(row.id)
       const type = await VXETable.modal.confirm('您确定要删除该数据?')
       if (type === 'confirm'){
-        let id=row.id
-        let index = (this.data.list).findIndex(item => {
-          if (item.id==id) {
-            return true
-          }
-        })
-        await this.deleteCommpanyById(id)
-        this.getCompanyListByPage()
+        let roleId=row.roleId
+        await this.deleteRoleById(roleId)
       }
     },
-    // 删除员工
-    deleteCommpanyById(id){
-      this.$store.dispatch('DeleteCommpanyById',id).then((res=>{
+    
+    insertRoleMenu(role){
+      this.$store.dispatch("InsertRoleMenu",role).then((res)=>{
+          console.log(role)
+          let statusCode = res.data.statusCode
+          if(statusCode==200){
+            this.submitLoading = false
+            VXETable.modal.message({ content: '修改成功', status: 'success' })
+            this.getRoleList()
+            this.showMenu=false
+          }else{
+            this.submitLoading = false
+            this.showMenu=true
+            VXETable.modal.message({ content: '修改成功', status: 'error' })
+          }
+      }).catch((err)=>{
+          this.submitLoading = false
+          this.showMenu=true
+          console.log("错误"+err)
+          VXETable.modal.message({ content: '修改错误', status: 'error' })
+      })
+    },
+
+    // 删除
+    deleteRoleById(roleId){
+      this.$store.dispatch('DeleteRoleById',roleId).then((res=>{
         let statusCode = res.data.statusCode
           if(statusCode==200){
             VXETable.modal.message({ content: '删除成功', status: 'success' })
             this.data.tableTotal=this.data.tableTotal-1
             this.tablePage.total=this.data.tableTotal
+            this.getRoleList()
           }else{
             VXETable.modal.message({ content: '删除失败', status: 'error' })
           }
       }))
     },
 
-     //  分页查询
-     getCompanyListByPage(){
-        this.tableLoading = true
-          setTimeout(() => {
-              this.$store.dispatch('GetCompanyListByPage',this.tablePage).then((res) => {
-                let statusCode = res.data.statusCode
-                    // 判断结果
-                if (statusCode==200) {
-                    this.data.list=res.data.data
-                    this.data.list.forEach(item=>{
-                    if(item.createTime!=null){
-                      item.createTime =timeFormat(item.createTime)
-                    }
-                  }) 
-                  this.data.tableData=this.data.list
-                  this.tableLoading = false
-                } else {
-                    console.log("错误")
-                }
-              }).catch((err) => {
-                  console.log(err);
-                  this.$message({
-                    showClose: true,
-                    message: '无权访问！',
-                    type: 'error'
-                  });
-              })
-          },200)
-      },
     // 分页组件触发 
     handlePageChange ({ currentPage, pageSize }) {
       this.tablePage.currentPage = currentPage
       this.tablePage.pageSize = pageSize
-      if(this.searchFlag){
-        this.searchEvent()
-      }else{
-        this.getCompanyListByPage()
-      }
+      // if(this.searchFlag){
+      //   this.searchEvent()
+      // }else{
+      //   this.getRoleList()
+      // }
     },
   },
 

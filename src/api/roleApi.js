@@ -23,3 +23,31 @@ export function updateRole(role) { // 更新
     data:role
   })
 }
+
+export function deleteRoleById(roleId) { 
+  return request({ //使用封装好的 axios 进行网络请求
+    url: '/deleteRoleById',
+    method: 'get',
+    params:{
+      roleId:roleId
+    }
+  })
+}
+
+export function searchRoleByName(roleName) { 
+  return request({ //使用封装好的 axios 进行网络请求
+    url: '/searchRoleByName',
+    method: 'get',
+    params:{
+      roleName:roleName
+    }
+  })
+}
+
+export function insertRoleMenu(role) { 
+  return request({ //使用封装好的 axios 进行网络请求
+    url: '/insertRoleMenu',
+    method: 'post',
+    data:role
+  })
+}
