@@ -1,6 +1,7 @@
 import { login } from '@/api/login'//引入登录 api 接口
 import {getPermissionByUserId} from '@/api/permission' // 引入获取菜单权限 api 接口
-import { getUserList,getUserListByPage,deleteUser,getRoleNameList,insertUser,updateUser} from '@/api/userApi' // 引入 员工管理接口
+import { getUserList,getUserListByPage,deleteUser,getRoleNameList,insertUser} from '@/api/userApi' // 引入 员工管理接口
+import { updateUser,getUserListTotalPage,searchUserList,searchUserListTotalPage} from '@/api/userApi' // 引入 员工管理接口
 
 import { getToken } from '@/utils/auth'
 
@@ -112,6 +113,39 @@ const user = {
           resolve(response) //将结果封装进 Promise
         }).catch(error => {
           console.log("system.js UpdateUser 错误")
+          reject(error)
+        })
+      })
+    },
+
+    GetUserListTotalPage({commit}){
+      return new Promise((resolve, reject) => { //封装一个 Promise
+        getUserListTotalPage().then(response => { //使用 permission 接口进行网络请求
+          resolve(response) //将结果封装进 Promise
+        }).catch(error => {
+          console.log("system.js GetUserListTotalPage 错误")
+          reject(error)
+        })
+      })
+    },
+
+    SearchUserList({commit},searchInfo){
+      return new Promise((resolve, reject) => { //封装一个 Promise
+        searchUserList(searchInfo).then(response => { //使用 permission 接口进行网络请求
+          resolve(response) //将结果封装进 Promise
+        }).catch(error => {
+          console.log("system.js SearchUserList 错误")
+          reject(error)
+        })
+      })
+    },
+    
+    SearchUserListTotalPage({commit},searchInfo){
+      return new Promise((resolve, reject) => { //封装一个 Promise
+        searchUserListTotalPage(searchInfo).then(response => { //使用 permission 接口进行网络请求
+          resolve(response) //将结果封装进 Promise
+        }).catch(error => {
+          console.log("system.js searchUserListTotalPage 错误")
           reject(error)
         })
       })

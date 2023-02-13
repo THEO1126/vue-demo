@@ -107,12 +107,6 @@ export default {
       hide:true,
       pwdType: "password",
       loginRules: {
-        // password: [
-        //   { validator: validatePw, trigger: 'blur' }
-        // ],
-        // username: [
-        //   { validator: validateUn, trigger: 'blur' }
-        // ]
         username: [{ required: true, trigger: 'blur', message: '用户名不能为空' }],
         password: [{ required: true, trigger: 'blur', message: '密码不能为空' }]
       },

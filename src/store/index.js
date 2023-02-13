@@ -6,12 +6,16 @@ import Vuex from 'vuex' //引入 Vuex
 //引入 user module 主要是登录、获取菜单列表、系统管理
 import user from './modules/user' 
 import menu from './modules/menu' 
+import company from './modules/company' 
+import role from './modules/role'
 
 Vue.use(Vuex)
 const store = new Vuex.Store({
   modules: {
     user, //使用 user.js 中的 action
-    menu
+    menu,
+    company,
+    role
   }
 })
 
