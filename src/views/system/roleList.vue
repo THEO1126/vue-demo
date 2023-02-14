@@ -67,6 +67,7 @@
           border="inner"
           height="550"
           ref="parentMenu"
+          :show-header="false"
           :row-config="{isHover: true, isCurrent: true,trigger:'row',keyField: 'id'}"
           :tree-config="{transform: true, rowField: 'id', trigger:'row',parentField: 'parentId',expandAll:true}"
           :checkbox-config="{labelField: 'name',checkRowKeys: checkRowKeys }"

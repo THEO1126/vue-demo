@@ -140,7 +140,7 @@
 </div>
 </template>
 <script>
-import {dataFormat} from '../../utils/dateUtil'  // 日期格式化
+import {dateFormat} from '../../utils/dateUtil'  // 日期格式化
 import { VXETable } from 'vxe-table'
 import console from 'console'
 
@@ -294,10 +294,10 @@ export default {
       //               })
       //               item.roleIdList=roleIdList
       //               if(item.onboardingTime!=null){
-      //                 item.onboardingTime =dataFormat(item.onboardingTime)
+      //                 item.onboardingTime =dateFormat(item.onboardingTime)
       //               }
       //               if(item.departureTime!=null){
-      //                 item.departureTime =dataFormat(item.departureTime)
+      //                 item.departureTime =dateFormat(item.departureTime)
       //               }
       //             })         
       //             this.tablePage.total = res.data.data.length
@@ -337,10 +337,10 @@ export default {
                       })
                       item.roleIdList=roleIdList
                       if(item.onboardingTime!=null){
-                        item.onboardingTime =dataFormat(item.onboardingTime)
+                        item.onboardingTime =dateFormat(item.onboardingTime)
                       }
                       if(item.departureTime!=null){
-                        item.departureTime =dataFormat(item.departureTime)
+                        item.departureTime =dateFormat(item.departureTime)
                       }
                     })
                     this.data.tableData=this.data.list
@@ -395,10 +395,10 @@ export default {
               })
               item.roleIdList=roleIdList
               if(item.onboardingTime!=null){
-                item.onboardingTime =dataFormat(item.onboardingTime)
+                item.onboardingTime =dateFormat(item.onboardingTime)
               }
               if(item.departureTime!=null){
-                item.departureTime =dataFormat(item.departureTime)
+                item.departureTime =dateFormat(item.departureTime)
               }
             })
             this.searchUserListTotalPage()

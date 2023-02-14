@@ -104,6 +104,7 @@
           border="inner"
           height="500"
           ref="parentMenu"
+          :show-header="false"
           :row-config="{isHover: true, isCurrent: true,trigger:'row'}"
           :tree-config="{transform: true, rowField: 'id', trigger:'row',parentField: 'parentId',expandAll:true}"
           :radio-config="{labelField: 'name', highlight: true,trigger:'row'}"
