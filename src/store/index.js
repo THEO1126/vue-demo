@@ -8,6 +8,7 @@ import user from './modules/user'
 import menu from './modules/menu' 
 import company from './modules/company' 
 import role from './modules/role'
+import purchase from './modules/purchase'
 
 Vue.use(Vuex)
 const store = new Vuex.Store({
@@ -15,7 +16,8 @@ const store = new Vuex.Store({
     user, //使用 user.js 中的 action
     menu,
     company,
-    role
+    role,
+    purchase
   }
 })
 
