@@ -167,7 +167,7 @@ export default {
         }
         // Encrypt 加密
         var cipherPW = CryptoJS.AES.encrypt(
-            user.password,//账号 或者  密码
+            user.password, //账号 或者  密码
             "key"  //键
         ).toString();
         if (user.password !== this.cookiePass) {
