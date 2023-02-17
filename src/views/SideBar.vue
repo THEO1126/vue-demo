@@ -1,21 +1,10 @@
-<!-- <template>
-  <nav id="nav">
-    <div id="navTitle">广西永湘物流公司</div>
-    <div id ="menu">
-      <ul  v-for="(menu,index) in menus" :key="index">
-          <tree-menu :menu="menu"></tree-menu>
-      </ul>
-    </div>
-  </nav>
-</template> -->
-
 <template>
   <nav id="nav">
     <div id="navTitle">广西永湘物流公司</div>
     <!-- 默认激活的是 首页 ，127是首页菜单的 index -->
-      <el-menu id ="menu" default-active="127">
-        <ul v-for="(menu,index) in menus" :key="index">
-          <tree-menu :menu="menu" :key="index"></tree-menu>
+      <el-menu id ="menu" :default-active="defaultActive">
+        <ul v-for="menu in menus" :key="menu.name">
+          <tree-menu :menu="menu" :key="menu.name"></tree-menu>
         </ul>
       </el-menu>
   </nav>
@@ -24,28 +13,22 @@
 <script>
 
 import TreeMenu from "@/views/TreeMenu";
-// 父组件
+
 export default {
   name: "SideBar",
   // 引入子组件
   components: {TreeMenu},
+
   data() {
     return {
-      // submenu: {
-      //   submenuHide: false,
-      //   submenuShow: true
-      // },
-      menus:[]
+      defaultActive: "首页", //关键 当前激活菜单的 index
+      userId:JSON.parse(window.localStorage.getItem("userId")),
+      menus:JSON.parse(window.localStorage.getItem("menu"))
     }
   },
   methods: {
-    // expand() {
-    //   this.submenu.submenuShow = !this.submenu.submenuShow;
-    //   this.submenu.submenuHide = !this.submenu.submenuHide;
-    // },
     getPermissionByUserId(){
-      let userId=JSON.parse(window.localStorage.getItem("user")).data.userId
-      this.$store.dispatch('GetPermissionByUserId',userId).then((res) => {
+      this.$store.dispatch('GetPermissionByUserId',this.userId).then((res) => {
         // 拿到结果
         let statusCode = res.data.statusCode
         this.menus=res.data.data
@@ -60,9 +43,27 @@ export default {
       })
     }
   },
-  mounted:function(){  // 页面加载时触发函数
-    console.log("SideBar加载触发")
-    this.getPermissionByUserId()
+
+  // 解决了 刷新页面保持当前菜单选中项及路由
+  watch: {
+    $route () {
+      this.setCurrentRoute()
+    }
+  },
+  methods: {
+    setCurrentRoute () {
+      //关键   通过他就可以监听到当前路由状态并激活当前菜单
+      this.defaultActive = this.$route.name 
+    }
+  },
+  created () {
+    this.setCurrentRoute()
+  },
+  // 页面加载时触发函数
+  mounted:function(){ 
+    if(this.userId && !menu){
+      this.getPermissionByUserId()
+    }
   }
 }
 </script>

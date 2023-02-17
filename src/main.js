@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import App from './App.vue'
-import router from './router/router' //引入路由配置
+import router from './router/index' //引入路由配置
 import store from './store' //引入 Vuex 状态管理
 
 /* 插件 */
@@ -9,7 +9,7 @@ import './plugins/vxe-table.js' // vxe-table
 
 /* 工具 */
 
-import {dataFormat} from './utils/dateUtil'  // 日期格式化
+// import {dateFormat} from './utils/dateUtil'  // 日期格式化
  
 /*导入qs axios*/
 import qs from 'qs';
@@ -29,8 +29,6 @@ import './assets/iconfont/iconfont.css'
 // vue 函数库
 import XEUtils from 'xe-utils'
 
-
-
 /*全局绑定*/
 Vue.prototype.$qs = qs;
 Vue.prototype.$axios =axios;
@@ -38,7 +36,6 @@ Vue.prototype.http=axios
 Vue.config.productionTip = false
 Vue.prototype.$XEUtils = XEUtils
 
-Vue.prototype.$dataFormat = dataFormat
 
 new Vue({
   render: h => h(App),

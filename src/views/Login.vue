@@ -18,6 +18,7 @@
               v-model="loginForm.username"
               autocomplete="on"
               placeholder="请输入用户名"
+              @keyup.enter.native="handleLogin"
           >
             <span slot="prefix" style="padding-left:7px">
               <i class="fa fa-user"></i>
@@ -31,7 +32,7 @@
               @keyup.enter.native="handleLogin"
               v-model="loginForm.password"
               autocomplete="on"
-              placeholder="请输入密码"
+              placeholder="请输入密码"              
           >
             <span slot="prefix">
               <i class="fa fa-key" style="padding-left:7px"></i>
@@ -74,26 +75,6 @@ import CryptoJS from "crypto-js";
 export default {
   name: "Login",
   data() {
-    // var validatePw = (rule, value, callback) => {
-    //   if (value === '') {
-    //     callback(new Error('密码不能为空'));
-    //   } else {
-    //     if (this.loginForm.password !== '') {
-    //       this.$refs.loginForm.validateField('password');
-    //     }
-    //     callback();
-    //   }
-    // };
-    // var validateUn = (rule, value, callback) => {
-    //   if (value === '') {
-    //     callback(new Error('用户名不能为空'));
-    //   } else {
-    //     if (this.loginForm.username !== '') {
-    //       this.$refs.loginForm.validateField('username');
-    //     }
-    //     callback();
-    //   }
-    // };
     return {
       Background: Background,
       oa_logo:oa_logo,
@@ -179,7 +160,7 @@ export default {
             let statusCode = response.data.statusCode
             if(statusCode==200){
               this.$router.push({ path: '/dashboard' })
-              window.localStorage.setItem("user",JSON.stringify(response.data))
+              // window.localStorage.setItem("user",JSON.stringify(response.data.data))
               if (user.rememberMe) {
                 Cookies.set('username', user.username, { expires: Config.passCookieExpires })
                 Cookies.set('password', user.password, { expires: Config.passCookieExpires })
@@ -198,7 +179,8 @@ export default {
                 type: 'warning'
               });
             }
-          }).catch(() => {
+          }).catch((err) => {
+            console.log(err)
             this.loading = false
             this.$message({
               showClose: true,

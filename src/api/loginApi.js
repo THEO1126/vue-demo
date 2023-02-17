@@ -6,6 +6,16 @@ export function login(loginInfo) { //登录接口
   return request({ //使用封装好的 axios 进行网络请求
     url: '/admin/login',
     method: 'post',
-    data: loginInfo
+    data: loginInfo,
+  })
+}
+
+export function getUserByUserId(userId) { // 获取 员工列表
+  return request({ //使用封装好的 axios 进行网络请求
+    url: '/getUserByUserId',
+    method: 'get',
+    params:{
+      userId:userId
+    }
   })
 }
