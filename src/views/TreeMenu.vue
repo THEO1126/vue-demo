@@ -1,40 +1,21 @@
-<!-- <template>
-  <li>
-    <router-link v-if="menu.type!=0" :to="menu.url" >
-      <span :class="`iconfont icon-${menu.icon.toLowerCase()}`"></span>
-      {{ menu.name }}
-    </router-link>
-
-    <a @click.prevent="isExpand=!isExpand" v-else>
-      <span :class="`iconfont icon-${menu.icon.toLowerCase()}`"></span>{{ menu.name }}
-      <i v-if="isExpand" class="el-icon-arrow-down"></i>
-      <i v-else="isExpand" class="el-icon-arrow-up"></i>
-    </a>
-    
-    <ul class="submenu" v-if="menu.childs.length!=0" v-show="isExpand">
-      <tree-menu v-for="(childMenu,idx) in menu.childs" :key="idx" :menu="childMenu"/>
-    </ul>
-  </li>
-</template> -->
-
 <template>
   <!-- 一级菜单无子菜单 -->
   <router-link  v-if="menu.type!=0" :to="menu.url" >
-    <el-menu-item :index="(menu.perId).toString()">
+    <el-menu-item :index="(menu.name).toString()">
       <span :class="`iconfont icon-${menu.icon.toLowerCase()}`"></span>
       <span slot="title"> {{ menu.name }}</span>
     </el-menu-item>
   </router-link>
   
   <!-- 一级菜单有子菜单 -->
-  <el-submenu v-else class="submenu" :index="(menu.perId).toString()">
+  <el-submenu v-else class="submenu" :index="(menu.name).toString()">
     <template slot="title" >
       <span :class="`iconfont icon-${menu.icon.toLowerCase()}`"></span>
       <span slot="title">{{ menu.name }}</span>
     </template>
     <!-- 二级菜单 -->
       <ul v-if="menu.childs.length!=0" class="childMenu">
-        <tree-menu v-for="(childMenu,idx) in menu.childs" :key="idx" :menu="childMenu"/>
+        <tree-menu v-for="childMenu in menu.childs" :key="childMenu.name" :menu="childMenu"/>
       </ul>
   </el-submenu>
 </template>

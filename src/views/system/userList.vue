@@ -268,8 +268,8 @@ export default {
           this.data.tableTotal=res.data.data
           this.tablePage.total = this.data.tableTotal
           this.tableLoading = false
+
           }).catch((err) => {
-            console.log(err)
               this.$message({
                   showClose: true,
                   message: '无权访问！',
@@ -277,85 +277,41 @@ export default {
               });
           })
       },
-      // 获取员工列表
-      // getUserList(){
-      //     this.tableLoading = true
-      //     setTimeout(() => {
-      //         this.$store.dispatch('GetUserList').then((res) => {
-      //           let statusCode = res.data.statusCode
-      //             // 判断结果
-      //         if (statusCode==200) {
-      //             this.data.tableData=res.data.data     
-      //             // 日期格式化            
-      //             this.data.tableData.forEach(item=>{
-      //               var roleIdList=[]
-      //               item.roleList.forEach(i=>{
-      //                 roleIdList.push(i.roleId)
-      //               })
-      //               item.roleIdList=roleIdList
-      //               if(item.onboardingTime!=null){
-      //                 item.onboardingTime =dateFormat(item.onboardingTime)
-      //               }
-      //               if(item.departureTime!=null){
-      //                 item.departureTime =dateFormat(item.departureTime)
-      //               }
-      //             })         
-      //             this.tablePage.total = res.data.data.length
-      //             this.tableLoading = false
-      //         } else {
-      //             this.$message({
-      //                 showClose: true,
-      //                 message: '加载失败！',
-      //                 type: 'error'
-      //             });
-      //         }
-      //         }).catch((err) => {
-      //           console.log(err)
-      //             this.$message({
-      //                 showClose: true,
-      //                 message: '无权访问！',
-      //                 type: 'error'
-      //             });
-      //         })
-      //     },200)
-      // },
 
       //  分页查询
       getUserListByPage(){
         this.tableLoading = true
-          setTimeout(() => {
-              this.$store.dispatch('GetUserListByPage',this.tablePage).then((res) => {
-                let statusCode = res.data.statusCode
-                    // 判断结果
-                if (statusCode==200) {
-                    this.data.list=res.data.data
-                    this.tableLoading = false
-                    this.data.list.forEach(item=>{
-                      var roleIdList=[]
-                      item.roleList.forEach(i=>{
-                        roleIdList.push(i.roleId)
-                      })
-                      item.roleIdList=roleIdList
-                      if(item.onboardingTime!=null){
-                        item.onboardingTime =dateFormat(item.onboardingTime)
-                      }
-                      if(item.departureTime!=null){
-                        item.departureTime =dateFormat(item.departureTime)
-                      }
-                    })
-                    this.data.tableData=this.data.list
-                } else {
-                    console.log("错误")
-                }
-              }).catch((err) => {
-                  console.log(err);
-                  this.$message({
-                    showClose: true,
-                    message: '无权访问！',
-                    type: 'error'
-                  });
-              })
-          },200)
+          this.$store.dispatch('GetUserListByPage',this.tablePage).then((res) => {
+            let statusCode = res.data.statusCode
+                // 判断结果
+            if (statusCode==200) {
+                this.data.list=res.data.data
+                this.tableLoading = false
+                this.data.list.forEach(item=>{
+                  var roleIdList=[]
+                  item.roleList.forEach(i=>{
+                    roleIdList.push(i.roleId)
+                  })
+                  item.roleIdList=roleIdList
+                  if(item.onboardingTime!=null){
+                    item.onboardingTime =dateFormat(item.onboardingTime)
+                  }
+                  if(item.departureTime!=null){
+                    item.departureTime =dateFormat(item.departureTime)
+                  }
+                })
+                this.data.tableData=this.data.list
+            } else {
+                console.log("错误")
+            }
+          }).catch((err) => {
+              console.log(err);
+              this.$message({
+                showClose: true,
+                message: '无权访问！',
+                type: 'error'
+              });
+          })
       },
       // 搜索事件 
       async searchEvent() {
@@ -384,7 +340,7 @@ export default {
     searchUserList(){
       console.log(this.searchInfo)
       this.$store.dispatch("SearchUserList",this.searchInfo).then((res)=>{
-        let statusCode = res.data.statusCode
+        let statusCode=res.data.statusCode
         if (statusCode==200) {
             this.data.list=res.data.data
             this.tableLoading = false
@@ -415,9 +371,8 @@ export default {
       })
     },
     searchUserListTotalPage(){
-      this.$store.dispatch('SearchUserListTotalPage',this.searchInfo).then((res) => {  
+      this.$store.dispatch('SearchUserListTotalPage',this.searchInfo).then((res) => {
         this.data.searchTotal=res.data.data
-        console.log(res.data.data)
         this.tablePage.total=this.data.searchTotal
         this.tableLoading = false
         }).catch((err) => {
@@ -429,23 +384,6 @@ export default {
             });
         })
     },
-    // searchEvent() {
-    //     const filterName = this.$XEUtils.toValueString(this.data.filterName).trim().toLowerCase()
-    //     if (filterName) {
-    //       const filterRE = new RegExp(filterName, 'gi')
-    //       const searchProps = ['nickName','username']
-    //       const rest = this.data.tableData.filter(item => searchProps.some(key => this.$XEUtils.toValueString(item[key]).toLowerCase().indexOf(filterName) > -1))
-    //       this.data.list = rest.map(row => {
-    //         const item = Object.assign({}, row)
-    //         searchProps.forEach(key => {
-    //           item[key] = this.$XEUtils.toValueString(item[key]).replace(filterRE, match => `<span class="keyword-lighten">${match}</span>`)
-    //         })
-    //         return item
-    //       })
-    //     } else {
-    //       this.data.list = this.data.listCopy
-    //   }
-    // },
     insertUser(userInfo){
       this.$store.dispatch("InsertUser",userInfo).then((res)=>{
           console.log(res.data)

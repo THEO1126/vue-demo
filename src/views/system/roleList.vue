@@ -113,7 +113,7 @@ export default {
       showMenu:false,
       menulist:[],
       searchFlag:false, // 搜索标志
-      username: JSON.parse(window.localStorage.getItem("user")).data.username,
+      username: JSON.parse(window.localStorage.getItem("user")).username,
       tableLoading: false,
       submitLoading: false,
       selectRoleMenu:{

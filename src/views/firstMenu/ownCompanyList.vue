@@ -87,7 +87,7 @@ export default {
   data() {
     return {
       searchFlag:false, // 搜索标志
-      username: JSON.parse(window.localStorage.getItem("user")).data.username,
+      username: JSON.parse(window.localStorage.getItem("user")).username,
       tableLoading: false,
       submitLoading: false,
       tablePage: {
@@ -158,42 +158,6 @@ export default {
           createBy:row.createBy
         }
       },
-
-      // getAllCompany(){
-      //     this.tableLoading = true
-      //     setTimeout(() => {
-      //         this.$store.dispatch('GetAllCompany').then((res) => {
-      //           let statusCode = res.data.statusCode
-      //           console.log(res)
-      //             // 判断结果
-      //         if (statusCode==200) {
-      //             this.data.tableData=res.data.data
-      //             this.data.list= res.data.data
-      //             this.data.listCopy=this.data.list
-      //             this.tableLoading = false
-      //             this.tablePage.total=res.data.data.length
-      //             this.data.tableData.forEach(item=>{
-      //               if(item.createTime!=null){
-      //                 item.createTime =timeFormat(item.createTime)
-      //               }
-      //             }) 
-      //         } else {
-      //             this.$message({
-      //                 showClose: true,
-      //                 message: '加载失败！',
-      //                 type: 'error'
-      //             });
-      //         }
-      //         }).catch((err) => {
-      //           console.log(err)
-      //             this.$message({
-      //                 showClose: true,
-      //                 message: '无权访问！',
-      //                 type: 'error'
-      //             });
-      //         })
-      //     },200)
-      // },
 
     resetEvent(){
       if(this.searchFlag){
@@ -353,31 +317,29 @@ export default {
      //  分页查询
      getCompanyListByPage(){
         this.tableLoading = true
-          setTimeout(() => {
-              this.$store.dispatch('GetCompanyListByPage',this.tablePage).then((res) => {
-                let statusCode = res.data.statusCode
-                    // 判断结果
-                if (statusCode==200) {
-                    this.data.list=res.data.data
-                    this.data.list.forEach(item=>{
-                    if(item.createTime!=null){
-                      item.createTime =timeFormat(item.createTime)
-                    }
-                  }) 
-                  this.data.tableData=this.data.list
-                  this.tableLoading = false
-                } else {
-                    console.log("错误")
+          this.$store.dispatch('GetCompanyListByPage',this.tablePage).then((res) => {
+            let statusCode = res.data.statusCode
+                // 判断结果
+            if (statusCode==200) {
+                this.data.list=res.data.data
+                this.data.list.forEach(item=>{
+                if(item.createTime!=null){
+                  item.createTime =timeFormat(item.createTime)
                 }
-              }).catch((err) => {
-                  console.log(err);
-                  this.$message({
-                    showClose: true,
-                    message: '无权访问！',
-                    type: 'error'
-                  });
-              })
-          },200)
+              }) 
+              this.data.tableData=this.data.list
+              this.tableLoading = false
+            } else {
+                console.log("错误")
+            }
+          }).catch((err) => {
+              console.log(err);
+              this.$message({
+                showClose: true,
+                message: '无权访问！',
+                type: 'error'
+              });
+          })
       },
     // 分页组件触发 
     handlePageChange ({ currentPage, pageSize }) {
