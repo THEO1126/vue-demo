@@ -1,7 +1,7 @@
 <template>
   <nav id="nav">
     <div id="navTitle">广西永湘物流公司</div>
-    <!-- 默认激活的是 首页 ，127是首页菜单的 index -->
+    <!-- 默认激活的是 首页 -->
       <el-menu id ="menu" :default-active="defaultActive">
         <ul v-for="menu in menus" :key="menu.name">
           <tree-menu :menu="menu" :key="menu.name"></tree-menu>
@@ -22,8 +22,8 @@ export default {
   data() {
     return {
       defaultActive: "首页", //关键 当前激活菜单的 index
-      userId:JSON.parse(window.localStorage.getItem("userId")),
-      menus:JSON.parse(window.localStorage.getItem("menu"))
+      userId:JSON.parse(localStorage.getItem("userId")),
+      menus:localStorage.getItem("menu") ? JSON.parse(localStorage.getItem("menu")):''
     }
   },
   methods: {
@@ -41,6 +41,10 @@ export default {
       }).catch(() => {
         this.loading = false
       })
+    },
+    setCurrentRoute () {
+      //关键   通过他就可以监听到当前路由状态并激活当前菜单
+      this.defaultActive = this.$route.name 
     }
   },
 
@@ -50,18 +54,12 @@ export default {
       this.setCurrentRoute()
     }
   },
-  methods: {
-    setCurrentRoute () {
-      //关键   通过他就可以监听到当前路由状态并激活当前菜单
-      this.defaultActive = this.$route.name 
-    }
-  },
   created () {
     this.setCurrentRoute()
   },
   // 页面加载时触发函数
   mounted:function(){ 
-    if(this.userId && !menu){
+    if(this.userId){
       this.getPermissionByUserId()
     }
   }
@@ -86,7 +84,8 @@ export default {
 
 #nav #menu{
     /*只是y方向*/
-  overflow-y: scroll;
+  overflow-y: auto;
+  height: 100%;
 }
 
 #nav #navTitle{

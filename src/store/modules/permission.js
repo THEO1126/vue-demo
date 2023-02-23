@@ -2,7 +2,7 @@ import {getPermissionByUserId} from '@/api/permissionApi' // 引入获取菜单�
 
 const naviBar = {
     state: {
-        menu: JSON.parse(localStorage.getItem('menuArr')) ? JSON.parse(localStorage.getItem('menu')) : []
+        menu: localStorage.getItem('menu') ? JSON.parse(localStorage.getItem('menu')) : ''
     },
     getters: {
         menu: state => {
