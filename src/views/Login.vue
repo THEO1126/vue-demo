@@ -96,7 +96,7 @@ export default {
   // 生命周期钩子函数，一个 vue 实例被生成后会调用这个函数
   created() {
     // 获取用户名密码等Cookie
-    this.getCookie()
+    // this.getCookie()
   },
   computed:{
     getUserId(){
@@ -158,6 +158,8 @@ export default {
             this.$store.dispatch('Login',this.loginForm).then((response) => {
             this.loading = false
             let statusCode = response.data.statusCode
+            var msg=response.data.message
+            console.log(response)
             if(statusCode==200){
               this.$router.push({ path: '/dashboard' })
               // window.localStorage.setItem("user",JSON.stringify(response.data.data))
@@ -175,7 +177,7 @@ export default {
               /* 弹出警告提示框 */
               this.$message({
                 showClose: true,
-                message: '用户名或密码错误！',
+                message: msg,
                 type: 'warning'
               });
             }
@@ -184,7 +186,7 @@ export default {
             this.loading = false
             this.$message({
               showClose: true,
-              message: '登录失败！后台未启动',
+              message: '错误',
               type: 'error'
           });
           })

@@ -22,8 +22,8 @@ export default {
   name: "Head",
   data() {
     return {
-      userId:JSON.parse(window.localStorage.getItem("userId")),
-      user:JSON.parse(window.localStorage.getItem("user")),
+      userId:JSON.parse(localStorage.getItem("userId")),
+      user:JSON.parse(localStorage.getItem("user")),
       roleNameList:[],
     };
   },
@@ -32,16 +32,16 @@ export default {
       this.$router.push({
           path: "/login",
       })
-      // localStorage.removeItem("userId")
       localStorage.removeItem("loginToken")
-      // localStorage.removeItem("user")
+
     },
     getUserByUserId(){
       this.$store.dispatch("GetUserByUserId",this.userId).then(res=>{
+        console.log(res)
          let statusCode=res.data.statusCode
          if(statusCode==200){
-          let user=JSON.parse(localStorage.getItem("user"))
-          user.roleList.forEach(item => {
+          this.user=JSON.parse(localStorage.getItem("user"))
+          this.user.roleList.forEach(item => {
               this.roleNameList.push(item.roleName)
           });
          }
@@ -51,14 +51,8 @@ export default {
 
   //mounted在页面渲染完成之后使用，也就是此时页面已完全取出Vue中的数据。
   mounted(){
-    if(this.userId && !this.user){
+    if(this.userId){
       this.getUserByUserId()
-    }else{
-      let user=JSON.parse(localStorage.getItem("user"))
-      this.roleNameList=[]
-      user.roleList.forEach(item => {
-        this.roleNameList.push(item.roleName)
-      });
     }
   }
 }

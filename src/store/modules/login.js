@@ -51,10 +51,12 @@ const loginVo={
         Login({ commit }, loginInfo) { //定义 Login 方法，在组件中使用 this.$store.dispatch("Login") 调用
             return new Promise((resolve, reject) => { //封装一个 Promise
             login(loginInfo).then(response => { //使用 login 接口进行网络请求
-                let userId=JSON.stringify(response.data.data.userId)
-                let loginToken=JSON.stringify(response.data.data.loginToken)
-                commit('setUserId',userId)
-                commit('setLoginToken',loginToken)
+                if(response.data.statusCode==200){
+                    let userId=JSON.stringify(response.data.data.userId)
+                    let loginToken=JSON.stringify(response.data.data.loginToken)
+                    commit('setUserId',userId)
+                    commit('setLoginToken',loginToken)
+                }
                 // localStorage.setItem("loginToken",JSON.stringify(response.data.data.loginToken))
                 resolve(response) //将结果封装进 Promise
             }).catch(error => {
@@ -65,8 +67,10 @@ const loginVo={
         GetUserByUserId({commit},userId){
             return new Promise((resolve, reject) => { //封装一个 Promise
               getUserByUserId(userId).then(response => { //使用 permission 接口进行网络请求
-                let user=JSON.stringify(response.data.data)
-                commit('setUser',user)
+                if(response.data.statusCode==200){
+                    let user=JSON.stringify(response.data.data)
+                    commit('setUser',user)
+                }
                 resolve(response) //将结果封装进 Promise
               }).catch(error => {
                 reject(error)

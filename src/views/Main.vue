@@ -1,10 +1,10 @@
 <template>
   <div>
+    <side-bar></side-bar>
     <div class="right">
       <head-area class="head"></head-area>
       <router-view class="view"></router-view>
     </div>
-      <side-bar></side-bar>
   </div>
 </template>
 

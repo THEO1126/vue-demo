@@ -18,7 +18,8 @@ service.interceptors.request.use(function (config) {
   return Promise.reject(error)
 })
 
-service.interceptors.response.use(response => {//请求拦截器
+//  响应
+service.interceptors.response.use(response => {
   let statusCode = response.data.statusCode
   if(statusCode==401){
     VXETable.modal.message({ content: response.data.msg, status: 'error' })

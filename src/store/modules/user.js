@@ -34,7 +34,7 @@ const user = {
         deleteUser(userId).then(response => { //使用 permission 接口进行网络请求
           resolve(response) //将结果封装进 Promise
         }).catch(error => {
-          console.log("system.js DeleteUser 错误")
+          console.log("System.js DeleteUser 错误")
           reject(error)
         })
       })
